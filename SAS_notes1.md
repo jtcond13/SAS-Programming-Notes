@@ -1,10 +1,10 @@
 SAS Programming Introduction
 =========================
-SAS programs are made up of steps. Steps are made up of statements. Each step begins with PROC or DATA, ends with `run;`
+SAS programs are made up of steps. Steps are made up of statements. Each step begins with PROC or DATA, and should end with `run;`
 
 Each statement begins with a keyword and ends with a semi-colon
 
-Three types of steps:
+There are three types of steps:
 
 *Data Steps: Reads data from an input source and creates a SAS data set (`.sas7bdat`)
 
@@ -29,13 +29,26 @@ Syntax Rules
 -Programs are executed one step at a time, steps found to have syntax erros are not executed 
 
 -Syntax errors will appear in the log
+
+-Variable names are not case sensitive; they must be 1-32 characters and start with a letter or underscore, followed by letters, underscores and numbers
+
 	
 Data
 ===========
--Data is stored in libraries, which are referred to in code as LIBREFs
+-Data is stored in libraries, which are referred to in code as `LIBREF`
 
 -You can create your own libraries using the `LIBNAME` assignment statement
 
--Data Sets contain a table, composed of variables (columns) and rows (observations), and a descriptor portion
+-Data Sets contain a table, composed of variables (columns) and rows (observations), and a descriptor portion, composed of information about the data set and variable attributes such as name, type (character or numeric) and length.
 
--Use `PROC CONTENTS` with `ibref._ALL_` to display the contents of a SAS library. The report will list all the SAS files contained in the library, as well as the descriptor portion of each data set in the library.
+-`PROC CONTENTS DATA=libref.SAS-data-set; RUN;` will display the data set descriptor portion
+
+-Missing value are valid in SAS, with missing character values just showing ' ' and missing numeric values displayed as '.'
+
+-Use `PROC CONTENTS` with `libref._ALL_` to display the contents of a SAS library. The report will list all the SAS files contained in the library, as well as the descriptor portion of each data set in the library.
+
+-You'd access a library like:
+
+	%let path=**filepath**;
+	libname orion "&path";
+	
