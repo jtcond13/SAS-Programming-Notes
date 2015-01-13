@@ -146,12 +146,10 @@ Accessing Non-SAS Data
 
 ```
 data ouput-data-set-name;
-	infile "&path/file" dlm = " "
+	infile "path/file"
 	input specifications;
 run;
 ```
-
-- Delimiter defaults to blank. 
 	
 	
 
