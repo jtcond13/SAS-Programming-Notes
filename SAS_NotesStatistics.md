@@ -1,6 +1,6 @@
-###Statistics in SAS###
+#Statistics in SAS#
 
-#Assessing a single variable#
+###Assessing a single variable###
 
 - `PROC MEANS` calculates a standard set of descriptive statistics.  It's written:
 ```
@@ -24,7 +24,7 @@ PROC UNIVARIATE DATA=SAS-data-set <options>;
 RUN;
 ```
 
-#Statistical Graphics in SAS#
+###Statistical Graphics in SAS###
 
 - `PROC SGSCATTER` can produce a wide range of scatterplots.  The procedure is written:
 
@@ -52,4 +52,5 @@ RUN;
 
 - `PROC SGRENDER` allows you to create plots from graph templates you have written yourself.
 
- 
+- Standard error measures variability of a sample statistic.
+-  

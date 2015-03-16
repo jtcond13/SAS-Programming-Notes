@@ -153,8 +153,92 @@ run;
 
 - Delimiter defaults to blank. 
 	
+- To access database data, the correct syntax is:
+
+```
+libname libref engine <user= "", password="", path="", schema"">
+```
+
+- To read raw data into SAS, the DATA step is used.  The syntax is as follows:
+
+```
+DATA ouput-data-set;
+	INFILE "&path/raw-data-file-name" dlm='';
+	INPUT specifications;
+RUN;
+```
+
+- The delimiter defaults to a a blanK space so if you're using a .csv then you'd write `dlm = ","`
+
+- The `INPUT` statement reads fields in the order they are in the raw file.  You name the variables how you'd like them and separate with `$`.
+
+- During the compilation phase, SAS scans the data step for syntax errors.  SAS also creates an input buffer to read the file.  
+Then SAS creates the Program Data Vector (containing _n_ (iteration counter) and _error_ (indicating error)).  The default 
+length for all variables is 8 bytes.  
+
+- To explicitly define the length of a character variable, you use a `LENGTH` statement.  This must proceed the INPUT statement.  The syntax is as follows:
+```
+LENGTH variable(s)<$>length;
+```
+
+SAS Functions & Creating New Variables
+=======================================
+
+- SAS Sum function accepts numeric constants, variables or arithmetic expressions (e.g. '2 + 3').  It is written:
+`SUM(variable1, variable2, ...)`
+
+- SAS Date function takes a SAS date (an integer representing distance from Jan 1, 1960) and returns something that can be used.
+Examples includes:
+
+```
+YEAR(SAS-date)
+QTR(SAS-date)
+MONTH(SAS-date)
+DAY(SAS-date)
+WEEKDAY(SAS-date)
+TODAY()
+DATE()
+```
+
+- Conversely, the `MDY` function returns SAS date value from a set of inputs.  It's written:
+
+```
+MDY(month, date, year)
+```
+
+- New variables are assigned in the `DATA` step, with new variables defined as `variable=definition` 
+
+- To combine data sets, you read in two data sets in one much as you would with one data set.  Data sets listed first will override sets listed later.  Syntax is:
+
+```
+Data Sas-Data-set;
+	Set SAS-data-set1 Sas-data-set2 ...;
+RUN;
+```
+
+- If two data sets contain different variables, you can rename the variables in one data set to match the first.  
+	In the above set, that would look like `Sas-Data-set(RENAME(old-name-1=new-name-1))`
 	
-
-
-
+- Joining SAS data sets based on a common variable (one-to-one relationship) is called match-merging. 
+	This is accomplished with a `Merge` statement embedded in a data step.  The syntax is:
 	
+```
+data Output-data-set
+	merge input-data-set-1 input-data-set-2
+	by variable
+run
+```
+
+- To combine data sets in a many-to-many fashion, the same syntax is used.
+
+Control Flow
+========================
+
+- Conditional statements can be assigned as `IF expression THEN statement`, with expressions composed of constants and/or variables, operators or SAS functions
+and statements being any executable SAS statement.
+
+
+- SAS also support `ELSE` and `ELSE IF` statements as part of the control flow.  
+
+- As well, there is a `DO; ... END;` loop that works much like a for loop in other languages. 
+
