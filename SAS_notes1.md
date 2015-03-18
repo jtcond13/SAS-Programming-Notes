@@ -231,6 +231,26 @@ run
 
 - To combine data sets in a many-to-many fashion, the same syntax is used.
 
+- When merging data sets, you can use the an IN statement to create a temporary variable 
+	that indicates whether the associated data set contributed data to any current observation.
+	This is created as a binary variable, with one indicating 'yes' and zero indicating 'no'.
+	The syntax is:
+		
+```
+data new-Sas-data-set;
+merge Sas-data-set(in=variable);
+by variable;
+run;
+```
+
+- To produce a data set that only contains matches, you can use a subsetting `if`statement,
+	as in:
+	`if emps = 1 and mau = 1;`
+	
+	As Boolean variables, you can omit testing them for truth with an alternate syntax.  For example,
+	instead of the above, you could simply write `if emps and mau`.  Instead of `if emps = 1 and mau = 0`,
+	you could write `if emps and not mau`.
+
 Control Flow
 ========================
 
