@@ -107,16 +107,16 @@ Reading Data in and Out
 	RUN;
 ```
 
-- SAS date constants allow you to convert SAS dale values (which you'll recall are numbers indicating the distance from Jan 1, 1960)
+- SAS date constants allow you to convert SAS date values (which you'll recall are numbers indicating the distance from Jan 1, 1960)
 to dates.  They are written `'ddmmm<yy>yy>'D`
 
 - You can create or change the value of a variable with the `variable=expression`.
 The variable can be a new or existing variable and the expression is anything that produces a value.
 
-- An expression is thus some combination of operands (constants and/or variables) and operators (arithmetic calculation symbols or SAS functions)
+- An expression is thus some combination of **operands** (constants and/or variables) and **operators** (arithmetic calculation symbols or SAS functions)
 . For arithmetic symbols, note that SAS respects the order of operations (i.e. PEMDAS).  However, all operations involving a missing value return a missing value.
 
-- Variables can be included or excluded from an ouput data set with the DROP and KEEP statements.
+- Variables can be included or excluded from an ouput data set with the `DROP` and `KEEP` statements.
 These are written `DROP variable-list;` and `KEEP variable-list;`.
 
 - SAS proccesses data steps in two steps:
@@ -126,7 +126,7 @@ These are written `DROP variable-list;` and `KEEP variable-list;`.
 2. If the program is executable, SAS compiles the program to machine code.
 3. SAS creates the Program Data Vector (PDV) to hold all observations. This is an area of memory 
 where SAS builds an observation.  It also contains two automatic variables `_n_` (iteration number) and `_ERROR_` (a categorical variable indicating an error) 
-4. SAS creates the descrptor portion of the new data set.
+4. SAS creates the descriptor portion of the new data set.
   
 ###Execution Phase###
 1. SAS reads and processes observations, creating the data portion of the output.
