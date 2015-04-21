@@ -131,7 +131,7 @@ the last observation of the primary variable is resached, SAS sets the `Last.` v
 ###Reading Raw Data###
 
 The `INPUT` statement describes the arrangement of values in the input data record.  **List input** can read standard or nonstandard data separated by a delimiter.  
-Column input can read standard data types that is already arranged in columns.  Column input specifies the exact starting and ending column for each variable. An example is:
+**Column input** can read standard data types that is already arranged in columns.  **Column input** specifies the exact starting and ending column for each variable. An example is:
 
 The syntax for the `INPUT` statement is:
 
@@ -144,7 +144,7 @@ Data SAS-data-set;
 **Standard data** is anything that SAS can read without any special instructions.  This includes whole numbers, decimals, +/- signs, and scientific or e notation.
 **Nonstandard data** includes special characters ($, %, etc.), commas, date values, hexadecimal and binary.  
 
-The `INPUT` statement for **nonstandard** data is `INPUT column-pointer-control variable informat`.  **Column-pointer-control** moves SAS to the
+The `INPUT` statement for **standard** data is `INPUT variable startcol-endcol...;`.  The `INPUT` statement for **nonstandard** data is `INPUT column-pointer-control variable informat`.  **Column-pointer-control** moves SAS to the
 start of the input variable, **variable** names the variable and **informat** specifies how SAS reads a variable (e.g. `$w.` or `DOLLARw.d`).
 
 Two common pointer controls are `@n` and `+n`.  `@n` is an absolute reference, and moves the pointer to column n.  The `+n` pointer moves the pointer n columns to the right from
@@ -162,12 +162,117 @@ input statements would omit pointer controls and thus each row would be read int
 You can also use line pointer controls to avoid writing multiple input statements.  The forward slash (/) is a relative line pointer control, and moves the pointer relative to the line on which it is currently positioned.
 For example "/ /" would move the pointer control two rows ahead.  The pound n (#n) pointer control is an absolute pointer, sending the pointer control n lines ahead of its current place.  
 
+The syntax for these is `INPUT @n/+n variable informat`.
+
 ###Controlling When a Record Loads###
 
 To stop an input statement from moving to the next record in a raw data file, you can use a line hold specifier to keep the current record in the input buffer.
-The syntax for this is `INPUT ..... @`.  This holds the record in the input buffer until SAS reaches the end of an input statement that doesn't have a line hold specifier (`@`).
+The syntax for this is `INPUT ..... @`.  This holds the record in the input buffer until an input statement without a line hold specifier is read (`@`).
 This enables you to nest input statements within conditional logic (if... else if) statements.  It's best to place conditional logic right after the place in an input statement where 
 the variable being tested is assigned an informat (and thus read into the input buffer).
+
+###Manipulating Character Values###
+
+**SAS functions** performs a transformation on, or performs a calculation from, the arguments supplied to the function. The syntax is:
+`function-name(argument-1, argument-n)`.  Arguments to SAS functions can be **constants**, **variables**, **SAS Expressions** or **other functions**.
+
+A **target variable** is defined as a variable whose type, length and value are determined by the results of a function.  **Character functions** return values of different lengths.
+
+One important character function is the `SUBSTR` function.  The syntax for assigning the results of the substring function to a variable is:
+`var=SUBSTR(string, start,<length>)`.  The string argument can be a character constant, variable or expression. The start argument specifies the starting position (SAS is not zero-indexed, first position is 1, not 0).
+The length argument specifies the number of characters to extract.  When `SUBSTR` is used on the left side of an assignement statement, it replaces variable values.  
+
+Another important character function is `LENGTH(argument)`.  The length function returns the length of a character string, excluding trailing blanks.  Blank values return a value of 1.  
+This is very useful, in combination with `SUBSTR`, to extract a string.  Other character functions include:
+
+1) `RIGHT`, which right-aligns a character value and brings trailing blanks to the beginning of the value
+2) `LEFT`, which left-aligns a character value and brings trailing blanks to the end of the value
+3) `CHAR(string, position)`, which returns a single character from a specified position in a string
+4) `PROPCASE(argument,<delimiter(s)>)`, which converts all letters in a value to proper case; any character used to separate words (including space) must be indicdated in the second argument as a string
+5) `LOWCASE` function converts all characters to upper case, does not require specifying a delimiter
+6) `SCAN(string, n, <delimiter(s)>)` returns the nth word from a character string
+7) `CATX` removes leading and trailing blanks, inserts delimiters, and returns a character string
+8) `TRIM` Removes trailing blanks from a character string
+9) `STRIP` Returns a character string wit all leading and trailing blanks removed
+10) `CAT`, `CATT`, `CATS` return concatenated character strings; `CAT` does not remove any blanks, `CATT` removes trailing blanks and `CATS` strips leading and trailing blanks
+11) `CATX(separator, string-1,..., string-n)` removes leading and trailing blanks, inserts separators and returns the concatenated string
+12) `FIND(string, substring, <modifiers,start>)` searches for a specific substring of characters within a character string and returns an integer that represents the starting position of the substring
+14) `TRANWRD(source, target, replacement)` replaces or removes all occurrences of target substring in source string
+15) `PROPCASE` converts all letters in a value to proper case
+16) `COMPRESS(source, <chars>)` removes specified characters from a string, if no characters are specified, removes blanks 
+
+Other things to note are:
+
+-In string functions, the delimiter argument should be a string that contains all possible delimiters.  The string ', ' would indicate that commas or spaces are delimiters, for example.
+-You use the substring function when you know the order of all characters in a value. You use the scan function when you know the order of the words in a value, but not the order of characters.
+-The concatenation operator is !!.  The syntax to create a new variable from concatenated strings is `NewVar=string-1 !! string-2;`
+
+##Numeric Functions##
+Some important descriptive statistic functions are:
+
+1)`SUM` returns the sum of the nonmissing arguments
+2) `MEAN` returns the average of the arguments
+3) `MIN` returns the smallest value from the arguments
+4) `MAX` returns the largest value from the arguments
+5) `N` returns the number of nonmissing arguments
+6) `NMISS` returns the number of nonmissnig numeric arguments
+7) `CMISS` returns the number of missing numeric or character arguments
+
+One way to write SAS numeric functions efficiently is to use a **variable list** as an argument,
+rather than specifying a list of variables or values individually.  This is accomplished with the keyword **of**.  
+One example is:
+
+`Avg = Mean(of Qtr1-Qtr4);`
+
+Some types of **variable lists** are:
+
+-Numbered range: all variables x1 to xn, inclusive (the example above would be of this type)
+-Name range: all variables ordered as they are in the program data vector, from x to a inclusive
+an example of this would be:
+
+`Avg = Mean(of Qtr4--Fifth);`
+
+You can also use a name range to specify all variables of a certain type, e.g.:
+
+`Avg = Mean(of x-numeric-a);` or
+`Avg = Mean(of x-character-a);`
+
+As well, you can specify all variables that begin with the same string.
+
+`Avg = mean(of Tot:);`
+
+Spacial SAS name lists allow you to specify all of the variables, all of the character variables
+or all of the numeric variables that are already defined in the current DATA step.
+
+`Avg = mean(of _All_);` would take the mean of all variables currently defined in the data step.
+`Avg = mean(of _Numeric_);` would take the mean of all numeric variables.
+
+###Rounding Values###
+
+- `ROUND(argument, <round-off-unit>);` A value rounded to the nearest multiple of the round-off unit(defaults to nearest integer)
+- `CEIL` The smallest integer greater than or equal to the argument
+- `FLOOR` returns the largest integer that is less than or equal to the argument
+- ``INT` returns the integer portion of the argument (truncates the decimal portion)
+
+##Character and Numeric Conversion##
+
+If you reference a **character variable** in a **numeric context** (such as in an arithmetic operation), SAS 
+tries to convert the values to numeric variables.  You can also convert automatically by **assigning character values to
+a previously designated numeric variable**.  Automatic conversion produces a missing value for any character value
+that does not conform to standard numeric form (w.).  
+
+To explicitly convert **character values to numeric values**, you can use the `Input(source, informat)` function. This converts the value in source
+to the informat specified in the second argument of the function.
+
+SAS automatically converts numeric values to character when you use the concatenation operator(or any `CAT` function).  When SAS automatically converts
+numeric values to character, it uses the **Bestw.** informat, which will add leading blanks to numeric values fewer than 12 digits
+long.
+
+To explicitly convert **numeric values to character values**, you can use the `Put(source, format)` function. This converts the value in source
+to the format specified in the second argument of the function. 
+
+Note that you can not convert a variable by using the syntax `variable = input(variable, informat)` but instead need
+to rename the variable and run `INPUT` or `PUT`.
 
 
 
