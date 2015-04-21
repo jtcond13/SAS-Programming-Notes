@@ -186,19 +186,33 @@ Another important character function is `LENGTH(argument)`.  The length function
 This is very useful, in combination with `SUBSTR`, to extract a string.  Other character functions include:
 
 1) `RIGHT`, which right-aligns a character value and brings trailing blanks to the beginning of the value
+
 2) `LEFT`, which left-aligns a character value and brings trailing blanks to the end of the value
+
 3) `CHAR(string, position)`, which returns a single character from a specified position in a string
+
 4) `PROPCASE(argument,<delimiter(s)>)`, which converts all letters in a value to proper case; any character used to separate words (including space) must be indicdated in the second argument as a string
+
 5) `LOWCASE` function converts all characters to upper case, does not require specifying a delimiter
+
 6) `SCAN(string, n, <delimiter(s)>)` returns the nth word from a character string
+
 7) `CATX` removes leading and trailing blanks, inserts delimiters, and returns a character string
+
 8) `TRIM` Removes trailing blanks from a character string
+
 9) `STRIP` Returns a character string wit all leading and trailing blanks removed
+
 10) `CAT`, `CATT`, `CATS` return concatenated character strings; `CAT` does not remove any blanks, `CATT` removes trailing blanks and `CATS` strips leading and trailing blanks
+
 11) `CATX(separator, string-1,..., string-n)` removes leading and trailing blanks, inserts separators and returns the concatenated string
+
 12) `FIND(string, substring, <modifiers,start>)` searches for a specific substring of characters within a character string and returns an integer that represents the starting position of the substring
+
 14) `TRANWRD(source, target, replacement)` replaces or removes all occurrences of target substring in source string
+
 15) `PROPCASE` converts all letters in a value to proper case
+
 16) `COMPRESS(source, <chars>)` removes specified characters from a string, if no characters are specified, removes blanks 
 
 Other things to note are:
@@ -211,12 +225,19 @@ Other things to note are:
 Some important descriptive statistic functions are:
 
 1)`SUM` returns the sum of the nonmissing arguments
+
 2) `MEAN` returns the average of the arguments
+
 3) `MIN` returns the smallest value from the arguments
+
 4) `MAX` returns the largest value from the arguments
+
 5) `N` returns the number of nonmissing arguments
+
 6) `NMISS` returns the number of nonmissnig numeric arguments
+
 7) `CMISS` returns the number of missing numeric or character arguments
+
 
 One way to write SAS numeric functions efficiently is to use a **variable list** as an argument,
 rather than specifying a list of variables or values individually.  This is accomplished with the keyword **of**.  
