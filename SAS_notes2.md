@@ -218,7 +218,9 @@ This is very useful, in combination with `SUBSTR`, to extract a string.  Other c
 Other things to note are:
 
 -In string functions, the delimiter argument should be a string that contains all possible delimiters.  The string ', ' would indicate that commas or spaces are delimiters, for example.
+
 -You use the substring function when you know the order of all characters in a value. You use the scan function when you know the order of the words in a value, but not the order of characters.
+
 -The concatenation operator is !!.  The syntax to create a new variable from concatenated strings is `NewVar=string-1 !! string-2;`
 
 ##Numeric Functions##
@@ -271,9 +273,12 @@ or all of the numeric variables that are already defined in the current DATA ste
 ###Rounding Values###
 
 - `ROUND(argument, <round-off-unit>);` A value rounded to the nearest multiple of the round-off unit(defaults to nearest integer)
+
 - `CEIL` The smallest integer greater than or equal to the argument
+
 - `FLOOR` returns the largest integer that is less than or equal to the argument
-- ``INT` returns the integer portion of the argument (truncates the decimal portion)
+
+- `INT` returns the integer portion of the argument (truncates the decimal portion)
 
 ##Character and Numeric Conversion##
 
@@ -296,4 +301,227 @@ Note that you can not convert a variable by using the syntax `variable = input(v
 to rename the variable and run `INPUT` or `PUT`.
 
 
+##Debugging Techniques##
+
+**Syntax Errors** occur when a program does not conform to the rules of the SAS language.  When this happens,
+SAS writes a message to the SAS log.  A **logic error** is when a program follows syntax rules, but the results
+aren't correct.
+
+One way to display variables messages and values is with the `PUTLOG <specifications>` statement. For example,
+for variable **name**, the statment `PUTLOG name=;" would right the value of the name at that point in the program 
+to the log. You can specifiy a format for the output with the syntax `variable=format` to ensure that the variable is printed correctly.
+`PUTLOG _all_` will write the value of all variables to the log.  
+
+One variable you may want to write to the log is the automatic variable **_ERROR_**. **_ERROR_** is an automatic
+variable that SAS creates with every data step, and it receives a value of one if the data step encounters input data errors
+, conversion errors, math errors or certain other errors.  
+
+Another important automatic variable is the **_N_**, which increments at every loop of the data step.  You may recall this
+from various procedures that have been covered, as it is also the variable which counts observations in a data set.
+
+You can use the value of **_N_** to apply conditional logic, e.g. :
+
+``` 
+if _n_1 = 1 then
+putlog 'First Iteration';
+```
+
+You can also use the `end = variable` option as part of a `SET` or `INPUT` statement, to create a variable that will equal
+one when the data step reaches its final iteration.
+
+
+##Iterative Do Loops##
+
+A `DO` loop is analagous to a **for loop** in most languages.  The syntax for it is:
+
+```
+Do *index-variable=start* to *stop* <by *increment*>;
+	iterated SAS statements...
+End;
+```
+
+The *start*, *stop* and *increment* statements must be numbers or expressions that evaluate to numbers.
+If you omit the `BY` statement, the increment defaults to 1.
+
+The loop executes until the value of the index variable **exceeds** the value specified in the stop statement.
+When the starting value of your index variable is greater than the stopping value, you must use a negative number
+for the increment.
+
+Alternatively, you can use an item list instead of an index so that the code within the do loop executes when any of the 
+statements in the item list are true.  The syntax and an example are below.
+
+```
+Do index-variable=item-1, <...item-n>;
+	iterated SAS statements...
+end;
+
+data investments;
+	do year=2010, 2011, 2012;
+		capital+500;
+		capital+(capital*.045);
+	end;
+run;
+```
+
+By default, SAS will only output to a dataset the values of variables in the last iteration of the loop.
+If you add `output;` to the end of the code nested in the do loop, SAS will write the contents of the PDV out at the end of every
+iteration of the loop.
+
+You can also have a loop execute until a condition evaluates to true.  SAS checks if the expression
+is true after executing the code inside the loop (do...until always executes at least once).  The syntax is:
+
+```
+Do Until (expression);
+	*iterated SAS statements...*
+End;
+```
+
+Conversely, you can execute a `Do` loop while a condition evaluates to true.  In this case, SAS checks if the expression
+is true before executing the code inside the loop.  The syntax is:
+
+```
+Do While (expression);
+	*iterated SAS statements...*
+End;
+```
+
+You can add a conditional clause to a do loop by including both an index variable and an until or while statement.
+The syntax for this is:
+
+```
+Do *index-variable=start* to *stop* <by>
+	Until | While (expression);
+	iterated SAS statements...
+End;
+```
+
+`Do` loops can be nested, but you must use different index variables.
+
+##SAS Arrays##
+
+A SAS array is a temporary grouping of variables (all of the same type), assigned to a unique name, that exists for the duration
+of the data step. SAS arrays are not data structures.
+
+An array is created with the syntax:
+
+```
+ARRAY array-name {dimension}<array-elements>;
+```
+
+In this statement, dimension is the number of variables being grouped.  You can also use the special SAS names `_numeric_` or `_character_`
+to group all numeric or character variables together.  You can use an array subscript `array-name{subscript}` to reference a variable within
+an array.
+
+You can use the subscript notation to loop over elements in an array.  The syntax for this is:
+
+```
+DO index-variable=1 to number-of-array-elements;
+	<additional SAS statements>
+END;
+```
+
+In this situation, you would use the index variable i to loop through the array elements.
+
+Another useful trick is the `DIM` function.  The `DIM(array-name)` function returns the number of elements
+in the array.
+
+Arrays can be passed to a function like a variable list you must include the word `of` when you do this, however.
+Also, you can create variables with an array, listing the values of variables after the array statement.
+
+You can create an array with inital values (For calculation) by adding a list of values, separated by commas and enclosed in parentheses, at the end of an array statement.
+To indicate that this array will not be needed in the output, you can use the SAS statement `_temporary_`.  This is useful when you only need the array to perform a calculation
+or look up a value.  Arrays that are marked `_temporary_` can not be referenced directly, but by their subsetting number.  This is because they are not created in the PDV, but instead
+held in a separate area of memory.  
+
+##Match Merge Functions##
+
+In a data step, you can create a new data set that is the result of merging two other data sets.
+You do this with the `merge` statement.  Before merging, you must sort (`PROC SORT`) on the merge variable before you can 
+merge.  
+
+When you match merge data sets with same-named variables, the data step overwrites values in one of the data sets with values
+from the other data set.  The best way to avoid this isto use the `Rename=` option in the data step.
+
+##Creating Formats##
+
+The `PROC FORMAT` procedure can be deployed to create formats.  The syntax for this is:
+
+```
+PROC FORMAT;
+	VALUE format-name value-or-range1='formatted-value1'
+										value-or-range2='formatted-value2'
+										...;
+RUN;
+```
+
+User-created formats, like SAS formats, must have a period after them when referred to in code.
+
+The syntax to create a format from another data table is:
+
+```
+PROC FORMAT CNTLIN=SAS-data-set;
+RUN
+```
+
+The control data set, however, must contain variables **FmtName**, **Start** and **Label**.  If the format specifies a range, the data must also
+contain the variable **End**.  The dataset must also contain the variable **Type** for character variables, unless the FmtName variable beings with a dollar sign.
+
+SAS formats are stored in a special type of directory called a **catalog**.  These contain a **.formats** extension.
+
+Format statements can be referenced in `FORMAT` statements, `FORMAT=` options, `PUT` statements, `PUT` functions and `WHERE` or `IF` statements.
+
+To specify the order in which SAS looks for formats, you can use the `FMTSEARCH= (location1 location2 location3)` option.
+Sometimes, you'll try to load a format that SAS can't load.  In that case, using the `OPTIONS NOFMTERR;` system option will default these 
+to $w. or w. formats.
+
+SAS searches in the order specified in the FMTSEARCH= option. By default, SAS searches in the work and library libraries first unless you specify them in the option. 
+
+You can nest formats in `PROC FORMAT` statements, assigning them to values the same way you would other formats.  They should, however,
+be enclosed in brackets.  `PROC FORMAT` can also be used to document the formats in a catalog.  Use 
+
+For managing formats, the `PROC CATALOG` statement can be invaluable. For more details, see documentation.
+
+To update a format whose original code you don't have, you start by using `PROC FORMAT` to create an output data set.  The syntax for this is:
+
+```
+PROC FORMAT LIBRARY=libref.catalog
+						CNTLOUT=SAS-data-set;
+```
+
+You can then alter that data set using standard techniques and then recreate a format using:
+
+```
+PROC FORMAT LIBRARY=libref.catalog
+						CNTLIN=SAS-data-set;
+```
+
+##PROC SQL##
+
+`PROC SQL` allows you to write ANSI-Standard SQL in SAS programs.  `PROC SQL` can access SAS data sets, like other SAS procedures, but can also access data in
+other database engines.  `PROC SQL` allows you to retrieve and manipulate **tables**, which can either refer to SAS datasets or RDBMS tables.
+
+`PROC SQL` can join tables and produce a report in one step, rather than creating a SAS data set in a `DATA` step.  SQL also allows you to join tables
+without pre-sorting the input.  On the other hand, the `DATA` step allows you to create multiple data sets, direct output to data sets based on which input data
+set contributed to the observation and perform complex manipulation (do loop, `First.` and `Last.` processing, arrays and the Hash object).
+
+As the subject of these notes is SAS, I won't enumerate here the various parts of a SQL query: *SELECT*, *FROM*, *WHERE*, etc.
+
+##SAS Macro Facility##
+
+The SAS Macro Facility is a utility for extending and improving upon SAS to limit the amount of code you must write to complete a task.
+
+**Macro** variables substitute text into SAS programs, **Macro programs** generate custom SAS code. 
+
+Certain macro variables are created by the SAS system but you can also create your own.  Automatic macro variables include:
+
+-&SYSDATE9
+-&SYSDAY
+-&SYSTIME
+
+The syntax to assign a macro variable is `%LET macro-variable=value`. SAS does not evaluate mathematical expressions as all macro variables are text strings.
+
+Macro variables are referenced with an ampersand (&).  For example, a macro variable defined as `%LET jack=23` would be referenced as `&jack` in the sas program.
+
+The system option `SYMBOLGEN` (`NOSYMBOLGEN`) controls whether macro variables are written to the SAS log.  Defaults to `NOSYMBOLGEN`.  
+Another way of writing messages to the log is using the `%PUT` statement.  SAS resolves macro variables before writing the message to the log.
 
