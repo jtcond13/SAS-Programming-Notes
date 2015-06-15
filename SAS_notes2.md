@@ -515,7 +515,9 @@ The SAS Macro Facility is a utility for extending and improving upon SAS to limi
 Certain macro variables are created by the SAS system but you can also create your own.  Automatic macro variables include:
 
 -&SYSDATE9
+
 -&SYSDAY
+
 -&SYSTIME
 
 The syntax to assign a macro variable is `%LET macro-variable=value`. SAS does not evaluate mathematical expressions as all macro variables are text strings.
