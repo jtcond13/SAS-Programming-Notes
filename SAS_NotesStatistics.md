@@ -10,10 +10,13 @@ PROC MEANS DATA=SAS-data-set <options>;
 RUN;
 ```
 
-- The options area is used list what statistics you want. 
+- The `CLASS` statement will group observations by the specified variables and display the number of missing values for each group.
+
+- The options area is used to list what statistics you want. 
 
 - `PROC UNIVARIATE` produces a set of plots and statistics to assess whether a univariate distribution is 
 normal.  This is written:
+
 ```
 PROC UNIVARIATE DATA=SAS-data-set <options>;
 	VAR variables;

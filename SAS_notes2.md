@@ -91,7 +91,7 @@ The syntax is:
 ```
 Data output-SAS-data-set;
 	SET input-SAS-data-set;
-	BY BY-variable...;
+	BY by-variable...;
 	<additional SAS statements>
 RUN;
 ```
@@ -400,7 +400,7 @@ End;
 ##SAS Arrays##
 
 A SAS array is a temporary grouping of variables (all of the same type), assigned to a unique name, that exists for the duration
-of the data step. SAS arrays are not data structures.
+of the data step. SAS arrays are not data structures, as in other languages.
 
 An array is created with the syntax:
 
