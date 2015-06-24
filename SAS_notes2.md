@@ -42,10 +42,10 @@ END;
 
 The select expression is any SAS statement that evaluates to a single value. The otherwise statement specifies what logic to follow if no conditions are true. 
 
-You can further subset expressions using the SELECT expression by adding a `DO` loop after a when statement.
+You can further subset expressions using the SELECT expression by adding a `DO` loop after a `WHEN` statement.
 
 In `DATA` step processing, you can use `DROP` and `KEEP` statements to determine whether a variable should be read into the output data set.
-For example, in the below data set, the variable Street would be dropped in the output data set.
+For example, in the below data set, the variable `Street_ID` would be dropped in the output data set.
 
 ```
 data usa australia other;
@@ -59,7 +59,7 @@ run;
 
 These statements can also be used in the same line as the `DATA` or `SET` statements.  The syntax is 
 `Sas-data-set(drop=variable)` or `Sas-data-set(keep=variable)`.  When the `DROP` or `KEEP` statements are used in the set statements,
-variables that are not selected are not read into the PDV (i.e. not available for processing).  However, when they are used in the data statement, they are.
+variables that are not selected are not read into the PDV (i.e. not available for processing).  However, when `drop` and `keep` are used in the data statement, they are.
 
 You can also limit the number of observations that a `DATA` step reads in.  By default, SAS will process the entire data set.  You 
 can use the `FIRSTOBS` and `OBS` statements to determine where SAS starts and finishes, respectively. The syntax for this is `SAS-Data-Set(obs=n)`.
@@ -68,7 +68,7 @@ can use the `FIRSTOBS` and `OBS` statements to determine where SAS starts and fi
 
 An **accumulating variable** accumulates the value of another variable and keeps its own value from one observation to the next.  To create
 an accumulating variable, you must use a `RETAIN` statement, the syntax of which is `RETAIN variable-name <initial-value>`.  Initial value
-option defaults to a missing value before the first execution of the `DATA` step.  In the example below, the Mth2Dte variable is initialized
+option defaults to a missing value before the first execution of the `DATA` step.  In the example below, the `Mth2Dte` variable is initialized
 with a value of 50.
 
 ```
@@ -514,11 +514,11 @@ The SAS Macro Facility is a utility for extending and improving upon SAS to limi
 
 Certain macro variables are created by the SAS system but you can also create your own.  Automatic macro variables include:
 
--&SYSDATE9
+-`&SYSDATE9`
 
--&SYSDAY
+-`&SYSDAY`
 
--&SYSTIME
+-`&SYSTIME`
 
 The syntax to assign a macro variable is `%LET macro-variable=value`. SAS does not evaluate mathematical expressions as all macro variables are text strings.
 
