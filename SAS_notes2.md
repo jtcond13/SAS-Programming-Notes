@@ -80,16 +80,26 @@ run;
 ```
 
 Problems can arise when a missing value is operated on by a retained variable.  This is because operation on a missing value returns a missing value.
-To get around this, you can use the **sum statement (+)** instead of the combination of the `RETAIN` and assignment statements.
+To get around this, you can use the **sum statement (+)** instead of the combination of the `RETAIN` and assignment statements.  The sum statement `a+b` is similar to `a+=b` in most languages.
+In this statement, the value on the left side of the sum statement is incremented by the value on the right.
+
+The above example would be rewritten as:
+
+```
+data mnthtot;
+	set orion.aprsales;
+	Mth2Dte+SaleAmt;
+run;
+```
 
 ###By-Group Processing with Accumulating Variables###
 
-The `PROC Sort` step can be used to sort data, with the `BY` statement used to choose the variable to sort on. Then you can add a `BY` statement to the `DATA` Step to process the data in groups. 
+The `PROC Sort` step can be used to sort data, with the `BY` statement used to choose the variable to sort on. If you do this, you can add a `BY` statement to the `DATA` Step to process the data in groups. 
 
 The syntax is:
 
 ```
-Data output-SAS-data-set;
+DATA output-SAS-data-set;
 	SET input-SAS-data-set;
 	BY by-variable...;
 	<additional SAS statements>
@@ -126,7 +136,9 @@ run;
 In this example, the final if statement makes sure that the value is ouput only when the group is finished processing.
 
 The same operation is done when there are multiple `BY` variables.  SAS creates `First.` and `Last.` variables for each variable.  When
-the last observation of the primary variable is resached, SAS sets the `Last.` variable to 1 for the primary and all subsequent by variables.
+the last observation of the primary variable is resached, SAS sets the `Last.` variable to 1 for the primary and all subsequent by variables. Note that when you're working with multiple 
+by-group variables, a value of one for either `First.` or `Last.` in the primary variable forces a value of one in the respective `First.` or `Last.` variable in the secondary variable since
+it's the first or last occurence of that variable within the primary group.  
 
 ###Reading Raw Data###
 
@@ -144,7 +156,8 @@ Data SAS-data-set;
 **Standard data** is anything that SAS can read without any special instructions.  This includes whole numbers, decimals, +/- signs, and scientific or e notation.
 **Nonstandard data** includes special characters ($, %, etc.), commas, date values, hexadecimal and binary.  
 
-The `INPUT` statement for **standard** data is `INPUT variable startcol-endcol...;`.  The `INPUT` statement for **nonstandard** data is `INPUT column-pointer-control variable informat`.  **Column-pointer-control** moves SAS to the
+The `INPUT` statement for **standard** data is `INPUT variable startcol-endcol...;`.  "Columns" refers to the number of characters from the left of a line (i.e. the 'e' in line would be column number 4).
+The `INPUT` statement for **nonstandard** data is `INPUT column-pointer-control variable informat`.  **Column-pointer-control** moves SAS to the
 start of the input variable, **variable** names the variable and **informat** specifies how SAS reads a variable (e.g. `$w.` or `DOLLARw.d`).
 
 Two common pointer controls are `@n` and `+n`.  `@n` is an absolute reference, and moves the pointer to column n.  The `+n` pointer moves the pointer n columns to the right from
@@ -160,7 +173,7 @@ To create a single observation from multiple rows in an input text file, you can
 input statements would omit pointer controls and thus each row would be read into the input buffer on its own.  
 
 You can also use line pointer controls to avoid writing multiple input statements.  The forward slash (/) is a relative line pointer control, and moves the pointer relative to the line on which it is currently positioned.
-For example "/ /" would move the pointer control two rows ahead.  The pound n (#n) pointer control is an absolute pointer, sending the pointer control n lines ahead of its current place.  
+For example "/ /" would move the pointer control two rows ahead.  The pound n (`#n`) pointer control is an absolute pointer, sending the pointer control to line number `n`.  The `#n` pointer control can read lines in any order.  
 
 The syntax for these is `INPUT @n/+n variable informat`.
 
@@ -308,18 +321,18 @@ SAS writes a message to the SAS log.  A **logic error** is when a program follow
 aren't correct.
 
 One way to display variables messages and values is with the `PUTLOG <specifications>` statement. For example,
-for variable **name**, the statment `PUTLOG name=;" would right the value of the name at that point in the program 
+for variable **name**, the statment `PUTLOG name=;"` would write the value of the name at that point in the program 
 to the log. You can specifiy a format for the output with the syntax `variable=format` to ensure that the variable is printed correctly.
 `PUTLOG _all_` will write the value of all variables to the log.  
 
-One variable you may want to write to the log is the automatic variable **_ERROR_**. **_ERROR_** is an automatic
+One variable you may want to write to the log is the automatic variable *_ERROR_*. *_ERROR_* is an automatic
 variable that SAS creates with every data step, and it receives a value of one if the data step encounters input data errors
 , conversion errors, math errors or certain other errors.  
 
-Another important automatic variable is the **_N_**, which increments at every loop of the data step.  You may recall this
+Another important automatic variable is the *_N_*, which increments at every loop of the data step.  You may recall this
 from various procedures that have been covered, as it is also the variable which counts observations in a data set.
 
-You can use the value of **_N_** to apply conditional logic, e.g. :
+You can use the value of *_N_* to apply conditional logic, e.g. :
 
 ``` 
 if _n_1 = 1 then
