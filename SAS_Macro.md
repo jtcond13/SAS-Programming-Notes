@@ -16,3 +16,28 @@ The **word scanner** then passes the statement to the appropriate compiler.  The
 
 - **Number**: Integer and floating-point numbers, including SAS date constants.  
 
+##SAS Functions##
+
+`%SYSEVAL` can be used for evaluating arithmetic expressions; `%SYSEVALF` performs a similar task, but will coerce character variables to numeric
+and return data in the `best32.` format. 
+
+`%INDEX(source, string)` searches a source variable for a string and returns the position in the source where it begins.  
+
+##SAS Call Routines##
+
+SAS call routines act similarly to functions, except that they can not be used in assignment statements or expressions.  Rather, they can
+alter the value of an argument.  One commmon routine is `CALL SYMPUTX(macro-variable, value);`, which changes the value of a macro variable.  
+
+##Defining Macro Variables in PROC SQL##
+Note that you can define macro variables using the `insert into:` syntax in `PROC SQL`.  For example:
+
+```
+proc sql;
+select count(distinct customers) into:mem from table;
+quit;
+```
+
+##Macro Programs##
+
+SAS Macro programs allow the user to use control flow (e.g. `%IF...%THEN` and `%DO...%END`) and modularity (functions) into their SAS programs.
+
