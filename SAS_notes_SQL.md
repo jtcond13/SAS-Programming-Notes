@@ -1,8 +1,8 @@
-#PROC SQL 2: the SQL#
+# PROC SQL 2: the SQL #
 
 *This is not intended as an exhaustive reference on (PROC) SQL*
 
-###Select Statement###
+### Select Statement ###
 
 The general select statement syntax is:
 
@@ -16,7 +16,7 @@ SELECT object-item <, ...object-item>
 	<,... order-by-item>>;
 ```
 
-###Case Expression###
+### Case Expression ###
 The CASE expression allows you to conditionally create columns according to the values of rows.
 
 ```
@@ -42,13 +42,13 @@ case year(order_date)
 end as Sale_Year
 ```
 
-###Removing Duplicate Values###
+### Removing Duplicate Values ###
 To only select unique rows in a SQL query, you can use the `DISTINCT` keyword in your select statement (e.g. `SELECT DISTINCT`).
 When there are multiple columns specified in the `SELECT` statement, the `DISTINCT` keyword ensures that only unique combinations
 of those columns are returned.  
 
 
-###PROC SQL Options###
+### PROC SQL Options ###
 You add options to `PROC SQL` in the first line of the step (i.e. `PROC SQL <option(s)>;`).  Note that certain options only apply to certain
 ODS destinations (HTML, PDF, etc.). 
 
@@ -78,7 +78,7 @@ The `NOEXEC` option prevents the step from executing, but just checks the code f
 `NOSYMBOLGEN|SYMBOLGEN` writes macro variable values to the SAS log.  `FEEDBACK` works similarly, but rewrites the entire `PROC SQL` statement
 with variable values substituted for macro variables.
 
-###Calculated and Conditional Columns###
+### Calculated and Conditional Columns ###
 It's possible to create columns that are the product of arithmetic operations on other columns, e.g.
 
 ```
@@ -87,7 +87,7 @@ Select Column-1, Column-1 * .2 as Column-2, ...
 Quit;
 ```
 
-###Subqueries ###
+### Subqueries ###
 It is possible to nest queries within other queries, usually within a `where` or `having` clause. These queries, called Subqueries,
 inner queries or sub-selects, are nested within queries by parentheses.  SAS evaluates them first before resolving the outer query.
 
@@ -98,11 +98,11 @@ If a subquery returns multiple values, you must use an IN operator or comparison
 keyword specifices that at least one of a set of values obtained from a subquery must satisfy a given condition.  The ALL keyword 
 specifies that all of the values obtained from a subquery must satisfy a given condition.  
 
-###In-Line Views###
+### In-Line Views ###
 An in-line view is a query that is nested in the from clause of another query. An in-line view can return a single column or multiple columns.  Like
 a subquery, it is enclosed in parentheses and does not precede a comma.
 
-###Set Operators###
+### Set Operators ###
 Set operators vertically combine tables.  They are:
 
 *	Union
@@ -112,17 +112,17 @@ Set operators vertically combine tables.  They are:
 
 These operators vertically combine the intermediate result sets of queries to create a final report. 
 
-####Rowwise####
+#### Rowwise ####
 The Union operator produces all unique rows from both result sets.  The Outer Union operator produces all rows from both
 result sets.  The Except set operator produces unique rows from the first result set that are not in the second.  The
 Intersect operator produces unique rows form the first result set that are in the second.  
 
-####Columnwise####
+#### Columnwise ####
 The Union operator aligns columns by their position in both result sets.  The Outer Union operator produces all columns 
 from both result sets.  The Except operator aligns columns by their position in both result sets.  The Intersect aligns columns
 by their position in both result sets.  
 
-####Other Syntax####
+#### Other Syntax ####
 The `All` operator modifies the rowwise behavior of set operators by not allowing the Union, Except and Intersect operators to dedup rows.
  The `CORR` or `CORRESPONDING` operator alters the columnwise behavior by suppressing the columns with names that do not appear in both result sets. This
  operator, like `All`, only applies to the `UNION`, `EXCEPT` and `INTERSECT` operators.  SAS evaluates Intersect first, while the other set operators have the same order of precedence.
@@ -136,7 +136,7 @@ UNION | OUTER UNION | EXCEPT | INTERSECT
 Select ...;
 ```
 
-####Displaying Query Results####
+#### Displaying Query Results ####
 You can change what a column is called in the output by adding a `'label'` after it in the `SELECT` statement.  The label
 can be up to 256 characters of text.  You can also call this with `LABEL='label'`.    
 
@@ -146,7 +146,7 @@ You can add titles and footnotes to output using the `TITLE<n>'text'` and `FOOTN
 
 Note also that you can add a constant (numeric or string literal) to `PROC SQL` output using the syntax `'constant-text' <AS alias>`.
 
-####Summary Statistics####
+#### Summary Statistics ####
 Both ANSI-standard and SAS SQL contain a number of functions for summarizing data.  These include `MAX`, `MIN`, `SUM`, etc.
 If you pass one argument to most SAS SQl functions, they will calculate down a column; If you pass two arguments, they will calculate rowwise. Most 
 ANSI SQL functions can accept only a single argument.
@@ -162,22 +162,22 @@ The `GROUP BY` expression can be used to summarize data by a specific column.
 
 You can use the position of a column in the select statement in the `ORDER BY` statement to shorten how much you have to type (e.g. `ORDER BY 2, 1, 3`).
 
-####Comparison to Data Step####
+#### Comparison to Data Step ####
 Note that the data step, passed with multiple set statements, can also be used to combine data sets vertically.  
 
-####Having Clause####
+#### Having Clause ####
 The `HAVING` clause acts similarly to the `WHERE` clause in that it subsets data, except the syntax rules are a little different.  You are allowed
 to use the column aliases of calculated columns without using the keyword `calculated`.  In fact, the `WHERE` statement can't use calculated columns at all, while the
 `HAVING` clause can.
 
-####Find Function####
+#### Find Function ####
 You can use the `FIND` function to identify rows that meet a criterion. This function searches a string for a specific substring and returns an integer that represents
 the starting position of the substring within the string.  The full syntax for this is `FIND(string, substring <,modifier(s)><,startpos>)`.
 The modifier `i` tells `FIND` to ignore case; the modifier `t` tells `FIND` to trim trailing blanks before searching.
 
 The Find function is also useful as part of a Boolean expression.
 
-####Creating Tables and Views####
+#### Creating Tables and Views ####
 You can create tables by:
 
 1. Copying columns and rows from existing table(s)
@@ -222,7 +222,7 @@ INSERT INTO table-name
 If a column list is provided, the order of values in the value statement must match it.  If not, it must match the layout of the table.
 
 
-###Views###
+### Views ###
 
 A `PROC SQL VIEW` is a stored query, or virtual table, with a a name that can be referenced similar to a normal table.  Whenever
 a view is referenced, the stored query is run and produces a temporary table with the most recent data.  Per ANSI standards, a view needs to
@@ -257,7 +257,7 @@ SELECT ...
 Note that the librefs in the `USING` statements are local to the view so you can call assign the same name to that libref that you do to the libref
 in your `CREATE VIEW` statement.
 
-####Dictionaries####
+#### Dictionaries ####
 
 Dictionary tables or views contain metadata about each SAS session or batch job.  They are read-only.  SAS automatically assigns the libref
 `dictionary` to all dictionary tables or views.  These are only available from within `PROC SQL`.  
@@ -267,7 +267,7 @@ SAS provides views in the `sashelp` library that are similar to dictionary views
 To prepare for working with dictionary views, you should use the `DESCRIBE TABLE(table-1<, ...table-n>)` statement to see what you're looking with.
 This sits inside a `PROC SQL` step.
 
-####Using the Macro Language with PROC SQL####
+#### Using the Macro Language with PROC SQL ####
 
 The SAS macro language is a text processing tool that allows you to automate and customize SAS code.  When macro variables
 are included as part of a `PROC SQL` step, SAS substitutes the appropriate values into the query before executing.
