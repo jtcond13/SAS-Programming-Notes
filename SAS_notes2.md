@@ -1,4 +1,5 @@
-##SAS Notes: Part 2##
+SAS Notes: Part 2
+======================
 
 Typically, in `DATA` steps, SAS reads in one observation and reads out another.  However, it's possible
 to control this using additional statements in one's code.  The traditional manner is to use the `set` statement
@@ -64,7 +65,8 @@ variables that are not selected are not read into the PDV (i.e. not available fo
 You can also limit the number of observations that a `DATA` step reads in.  By default, SAS will process the entire data set.  You 
 can use the `FIRSTOBS` and `OBS` statements to determine where SAS starts and finishes, respectively. The syntax for this is `SAS-Data-Set(obs=n)`.
 
-##Summarizing Data##
+Summarizing Data
+===================
 
 An **accumulating variable** accumulates the value of another variable and keeps its own value from one observation to the next.  To create
 an accumulating variable, you must use a `RETAIN` statement, the syntax of which is `RETAIN variable-name <initial-value>`.  Initial value
@@ -92,7 +94,8 @@ data mnthtot;
 run;
 ```
 
-###By-Group Processing with Accumulating Variables###
+By-Group Processing with Accumulating Variables
+===============================================
 
 The `PROC Sort` step can be used to sort data, with the `BY` statement used to choose the variable to sort on. If you do this, you can add a `BY` statement to the `DATA` Step to process the data in groups. 
 
@@ -140,7 +143,8 @@ the last observation of the primary variable is resached, SAS sets the `Last.` v
 by-group variables, a value of one for either `First.` or `Last.` in the primary variable forces a value of one in the respective `First.` or `Last.` variable in the secondary variable since
 it's the first or last occurence of that variable within the primary group.  
 
-###Reading Raw Data###
+Reading Raw Data
+===================
 
 The `INPUT` statement describes the arrangement of values in the input data record.  **List input** can read standard or nonstandard data separated by a delimiter.  
 **Column input** can read standard data types that is already arranged in columns.  **Column input** specifies the exact starting and ending column for each variable. An example is:
@@ -167,7 +171,8 @@ In this operation, the program data vector is populated from the input buffer, w
 numeric variables are automatically stored in eight bytes of storage but you have to specify an informat so that the number gets sufficient
 column space.  
 
-###Creating a Single Observation from Multiple Records###
+Creating a Single Observation from Multiple Records
+====================================================
 
 To create a single observation from multiple rows in an input text file, you can use multiple input statements.  These
 input statements would omit pointer controls and thus each row would be read into the input buffer on its own.  
@@ -177,14 +182,16 @@ For example "/ /" would move the pointer control two rows ahead.  The pound n (`
 
 The syntax for these is `INPUT @n/+n variable informat`.
 
-###Controlling When a Record Loads###
+Controlling When a Record Loads
+================================
 
 To stop an input statement from moving to the next record in a raw data file, you can use a line hold specifier to keep the current record in the input buffer.
 The syntax for this is `INPUT ..... @`.  This holds the record in the input buffer until an input statement without a line hold specifier is read (`@`).
 This enables you to nest input statements within conditional logic (if... else if) statements.  It's best to place conditional logic right after the place in an input statement where 
 the variable being tested is assigned an informat (and thus read into the input buffer).
 
-###Manipulating Character Values###
+Manipulating Character Values
+=============================
 
 **SAS functions** performs a transformation on, or performs a calculation from, the arguments supplied to the function. The syntax is:
 `function-name(argument-1, argument-n)`.  Arguments to SAS functions can be **constants**, **variables**, **SAS Expressions** or **other functions**.
@@ -236,7 +243,9 @@ Other things to note are:
 
 -The concatenation operator is !!.  The syntax to create a new variable from concatenated strings is `NewVar=string-1 !! string-2;`
 
-##Numeric Functions##
+Numeric Functions
+===================
+
 Some important descriptive statistic functions are:
 
 1)`SUM` returns the sum of the nonmissing arguments
@@ -283,7 +292,8 @@ or all of the numeric variables that are already defined in the current DATA ste
 `Avg = mean(of _All_);` would take the mean of all variables currently defined in the data step.
 `Avg = mean(of _Numeric_);` would take the mean of all numeric variables.
 
-###Rounding Values###
+Rounding Values
+==================
 
 - `ROUND(argument, <round-off-unit>);` A value rounded to the nearest multiple of the round-off unit(defaults to nearest integer)
 
@@ -293,7 +303,8 @@ or all of the numeric variables that are already defined in the current DATA ste
 
 - `INT` returns the integer portion of the argument (truncates the decimal portion)
 
-##Character and Numeric Conversion##
+Character and Numeric Conversio
+=============================
 
 If you reference a **character variable** in a **numeric context** (such as in an arithmetic operation), SAS 
 tries to convert the values to numeric variables.  You can also convert automatically by **assigning character values to
@@ -314,7 +325,8 @@ Note that you can not convert a variable by using the syntax `variable = input(v
 to rename the variable and run `INPUT` or `PUT`.
 
 
-##Debugging Techniques##
+Debugging Techniques
+==========================
 
 **Syntax Errors** occur when a program does not conform to the rules of the SAS language.  When this happens,
 SAS writes a message to the SAS log.  A **logic error** is when a program follows syntax rules, but the results
@@ -343,7 +355,8 @@ You can also use the `end = variable` option as part of a `SET` or `INPUT` state
 one when the data step reaches its final iteration.
 
 
-##Iterative Do Loops##
+Iterative Do Loops
+===================
 
 A `DO` loop is analagous to a **for loop** in most languages.  The syntax for it is:
 
@@ -410,7 +423,8 @@ End;
 
 `Do` loops can be nested, but you must use different index variables.
 
-##SAS Arrays##
+SAS Arrays
+=============
 
 A SAS array is a temporary grouping of variables (all of the same type), assigned to a unique name, that exists for the duration
 of the data step. SAS arrays are not data structures, as in other languages.
@@ -446,7 +460,8 @@ To indicate that this array will not be needed in the output, you can use the SA
 or look up a value.  Arrays that are marked `_temporary_` can not be referenced directly, but by their subsetting number.  This is because they are not created in the PDV, but instead
 held in a separate area of memory.  
 
-##Match Merge Functions##
+Match Merge Functions
+======================
 
 In a data step, you can create a new data set that is the result of merging two other data sets.
 You do this with the `merge` statement.  Before merging, you must sort (`PROC SORT`) on the merge variable before you can 
@@ -455,7 +470,8 @@ merge.
 When you match merge data sets with same-named variables, the data step overwrites values in one of the data sets with values
 from the other data set.  The best way to avoid this isto use the `Rename=` option in the data step.
 
-##Creating Formats##
+Creating Formats
+==================
 
 The `PROC FORMAT` procedure can be deployed to create formats.  The syntax for this is:
 
@@ -508,7 +524,8 @@ PROC FORMAT LIBRARY=libref.catalog
 						CNTLIN=SAS-data-set;
 ```
 
-##PROC SQL##
+PROC SQL
+===========
 
 `PROC SQL` allows you to write ANSI-Standard SQL in SAS programs.  `PROC SQL` can access SAS data sets, like other SAS procedures, but can also access data in
 other database engines.  `PROC SQL` allows you to retrieve and manipulate **tables**, which can either refer to SAS datasets or RDBMS tables.
@@ -519,7 +536,8 @@ set contributed to the observation and perform complex manipulation (do loop, `F
 
 As the subject of these notes is SAS, I won't enumerate here the various parts of a SQL query: *SELECT*, *FROM*, *WHERE*, etc.
 
-##SAS Macro Facility##
+SAS Macro Facility
+==================
 
 The SAS Macro Facility is a utility for extending and improving upon SAS to limit the amount of code you must write to complete a task.
 
